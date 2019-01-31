@@ -157,8 +157,9 @@ def mobilenetV2(input_shape=(512, 512, 3), classes=21, alpha=1., reg=0.0001, d=0
     x = Conv2D(classes, (1, 1), padding='same', kernel_regularizer=regularizers.l2(reg),
                name=last_layer_name)(x)
     x = UpSampling2D(size=(8, 8), interpolation='bilinear')(x)
-    x = Conv2D(classes, (1, 1), padding='same', activation='softmax',
+    x = Conv2D(classes, (1, 1), padding='same',
                kernel_regularizer=regularizers.l2(reg), name='conversion1hot')(x)
+    x = Activation('softmax')(x)
 
     # Ensure that the model takes into account
     # any potential predecessors of `input_tensor`.

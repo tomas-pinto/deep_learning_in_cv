@@ -19,15 +19,10 @@ from model import relu6, mobilenetV2
 model = mobilenetV2(input_shape=(720, 960, 3), classes=12, alpha=1., reg=0.0001, d=0.1)
 model.summary()
 
-## LOAD WEIGHTS ##
-from keras.models import load_model
-name = 'baseline_weights' #Change this name to load the best model
-model.load_weights("./{}.h5".format(name))
-
+## DEFINE METRICS AND WEIGHTS LOSS FUNCTION ##
 from metrics import MeanIoU, IoU, single_class_accuracy
 import numpy as np
 
-## DEFINE METRICS AND WEIGHTS LOSS FUNCTION ##
 num_classes = 12
 miou_metric = MeanIoU(num_classes)
 void_iou_metric = IoU(num_classes,0)
@@ -110,8 +105,17 @@ model.compile(
              pedestrian_acc_metric,
              cyclist_acc_metric])
 
-## EVALUATE MODEL ##
-from generator import generate_data
+## LOAD WEIGHTS ##
+from keras.models import load_model
+name = 'baseline_weights' #Change this name to load the best model
+model.load_weights("./{}.h5".format(name))
 
-test_accuracy = model.evaluate_generator(generate_data(test_files,29,x2y,rgb2label,x_dir,y_dir), 8)
+## EVALUATE MODEL ##
+
+from sequence import generate_data
+test_accuracy = model.evaluate_generator(generate_data(test_files[0:1],1,x2y,rgb2label,x_dir,y_dir))
+print(test_accuracy)
+
+X,y = generate_data(test_files[0:1],1,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
+test_accuracy = model.evaluate(X,y)
 print(test_accuracy)
