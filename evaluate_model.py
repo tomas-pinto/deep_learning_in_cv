@@ -108,14 +108,9 @@ model.compile(
 ## LOAD WEIGHTS ##
 from keras.models import load_model
 name = 'baseline_weights' #Change this name to load the best model
-model.load_weights("./{}.h5".format(name))
+model.load_weights("./Weights/{}.h5".format(name))
 
 ## EVALUATE MODEL ##
-
 from sequence import generate_data
 test_accuracy = model.evaluate_generator(generate_data(test_files[0:1],1,x2y,rgb2label,x_dir,y_dir))
-print(test_accuracy)
-
-X,y = generate_data(test_files[0:1],1,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
-test_accuracy = model.evaluate(X,y)
 print(test_accuracy)

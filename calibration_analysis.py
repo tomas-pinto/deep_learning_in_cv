@@ -108,7 +108,7 @@ model.compile(
 ## LOAD WEIGHTS ##
 from keras.models import load_model
 name = 'baseline_weights' #Change this name to load the best model
-model.load_weights("./{}.h5".format(name))
+model.load_weights("./Weights/{}.h5".format(name))
 
 ## EVALUATE MODEL ##
 # from sequence import generate_data

@@ -108,15 +108,9 @@ model.compile(
 ## LOAD WEIGHTS ##
 from keras.models import load_model
 name = 'baseline_weights' #Change this name to load the best model
-model.load_weights("./{}.h5".format(name))
+model.load_weights("./Weights/{}.h5".format(name))
 
-## EVALUATE MODEL ##
-# from sequence import generate_data
-
-# X,y = generate_data(test_files[0:1],1,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
-# test_accuracy = model.evaluate(X,y)
-# print(test_accuracy)
-
+## POP LAST LAYER ##
 model.layers.pop()
 i = model.input
 o = model.layers[-1].output
@@ -152,64 +146,38 @@ model.compile(
              pedestrian_acc_metric,
              cyclist_acc_metric])
 
-from sequence import generate_data
-
 # Define the batch to analyze
 files = test_files + val_files
-batch_size = 1
 
-count_one = np.zeros((10,))
-total = np.zeros((10,))
-i = 0
-image_data = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir)
-for (x,y) in image_data:
-  # flatten ground truth
-  y = np.reshape(y,(batch_size*720*960*12,))
+# Shuffle Test+Val sets
+import random
+random.shuffle(files)
 
-  # compute logits of prediction over image x
-  prediction = model.predict(x,steps=1)
+# Define the batch to analyze
+file = files[0:31]
+batch_size = len(file)
 
-  # make T equal to 1 to get uncalibrated probabilities
-  T = 1
+from sequence import generate_data
 
-  # compute softmax of logits and flatten
-  uncalibrated = calibration_softmax(prediction/(T))
-  uncalibrated = np.reshape(uncalibrated,(batch_size*720*960*12))
+_,y = generate_data(file,batch_size,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
+print(y.shape)
 
-  # flatten logits
-  prediction = np.reshape(prediction,(batch_size*720*960*12))
+prediction = model.predict_generator(generate_data(file,1,x2y,rgb2label,x_dir,y_dir))
+print(prediction.shape)
 
-  # trim all values close to zero
-  new_uncalibrated = (((1+(uncalibrated >= 0.005))-1) * uncalibrated)
-  new_y = y[new_uncalibrated!=0]
-  new_uncalibrated = new_uncalibrated[new_uncalibrated!=0]
+# compute softmax of logits and flatten
+uncalibrated = calibration_softmax(prediction)
+uncalibrated = np.reshape(uncalibrated,(batch_size*720*960,12))
 
-  # fill bins
-  range_min = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
-  range_max = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
+# flatten logits and ground truth
+prediction = np.reshape(prediction,(batch_size*720*960,12))
+y = np.reshape(y,(batch_size*720*960,12))
 
-  for j in range(10):
-    cropped_pred = new_uncalibrated[new_uncalibrated < range_max[j]]
-    cropped_y = new_y[new_uncalibrated < range_max[j]]
-    bin_sample = cropped_y[cropped_pred > range_min[j]]
-    count_one[j] = count_one[j] + np.count_nonzero(bin_sample)
-    total[j] = total[j] + len(bin_sample)
+print(y.shape)
+print(prediction.shape)
+print(uncalibrated.shape)
 
-  i = i + 1
-  print(i)
-  print(count_one/total)
-
-true = [0.05,0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.85,0.95]
-print("count_one =", count_one)
-print("total =", total)
-p = count_one/total
-print("p =", p)
-
-# MSE
-print("MSE = {:.5f}".format(np.sum((p-true)**2)/len(true)))
-
-# ECE
-print("ECE = {:.5f}".format(np.sum((total/np.sum(total))*np.abs(p-true))))
-
-# MCE
-print("MCE = {:.5f}".format(np.max(np.abs(p-true))))
+from temp_scaling import TemperatureScaling
+# Find temperature by minimizing NLL Loss
+a = TemperatureScaling(model)
+a.fit(prediction,y)
