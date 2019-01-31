@@ -1,3 +1,6 @@
+import tensorflow as tf
+import numpy as np
+
 ## IOU and MEAN_IOU METRICS DEFINITION ##
 class MeanIoU(object):
     def __init__(self, num_classes):
