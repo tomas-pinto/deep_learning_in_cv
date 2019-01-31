@@ -28,7 +28,7 @@ def generate_data(train_files,batch_size,x2y,rgb2label,x_dir,y_dir):
         for batch in range(y_batch_np.shape[0]):
           for row in range(y_batch_np.shape[1]):
             for col in range(y_batch_np.shape[2]):
-              y_label[batch][row][col] =  self.rgb2label[tuple((y_rgb[batch][row][col]*255).reshape(1, -1)[0])]
+              y_label[batch][row][col] =  rgb2label[tuple((y_rgb[batch][row][col]*255).reshape(1, -1)[0])]
 
         y_one_hot = keras.utils.to_categorical(y_label, num_classes=12, dtype='float32')
 
