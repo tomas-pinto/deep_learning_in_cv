@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+from keras import backend as K
 
 ## IOU and MEAN_IOU METRICS DEFINITION ##
 class MeanIoU(object):
