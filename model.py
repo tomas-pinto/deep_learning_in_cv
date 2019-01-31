@@ -18,6 +18,10 @@ from keras.applications import imagenet_utils
 from keras.utils import conv_utils
 from keras.utils.data_utils import get_file
 
+def calibration_softmax(x):
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum(axis=-1, keepdims=1)
+
 
 def relu6(x):
     return K.relu(x, max_value=6)
