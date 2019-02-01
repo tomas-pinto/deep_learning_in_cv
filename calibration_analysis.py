@@ -64,10 +64,10 @@ for (X,y) in generate_data(files,1,x2y,rgb2label,x_dir,y_dir):
     prediction = calibration_softmax(model.predict(X,steps=1)/T)
   elif sys.argv[1] == 'd': # Dirichlet prediction is its expectation
     alphas = model.predict(X,steps=1)
-    #alpha_0 = np.reshape(np.sum(alphas, axis=3),(alphas.shape[0],alphas.shape[1],alphas.shape[2],1))
-    #prediction = alphas/alpha_0
-    d = np.array([np.random.dirichlet(1000*s+1e-8) for i in alphas for a in i for s in a])
-    prediction = np.reshape(d, alphas.shape)
+    alpha_0 = np.reshape(np.sum(alphas, axis=3),(alphas.shape[0],alphas.shape[1],alphas.shape[2],1))
+    prediction = alphas/alpha_0
+    #d = np.array([np.random.dirichlet(1000*s+1e-8) for i in alphas for a in i for s in a])
+    #prediction = np.reshape(d, alphas.shape)
 
   c = np.argmax(y,axis=3)
   mask = (c != 0) + 0 # make void mask
