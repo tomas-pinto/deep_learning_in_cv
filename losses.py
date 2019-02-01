@@ -1,5 +1,7 @@
-## CUSTOM LOSS FUNCTION ##
+## CUSTOM LOSS FUNCTIONS ##
 from keras import backend as K
+
+# Weighted crossentropy loss #
 def weighted_categorical_crossentropy(weights):
     """
     A weighted version of keras.objectives.categorical_crossentropy
@@ -23,6 +25,21 @@ def weighted_categorical_crossentropy(weights):
         # calc
         loss = y_true * K.log(y_pred) * weights
         loss = -K.sum(loss, -1)
+        return loss
+
+    return loss
+
+# Weighted Dirichlet Loss #
+def weighted_dirichlet_loss(weights):
+
+    class_weights = K.constant(weights)
+
+    def loss(y_true, y_pred):
+        pixel_weights = K.gather(class_weights, K.argmax(y_true, axis=-1))
+        dist = tf.distributions.Dirichlet(1000*y_pred+K.epsilon())
+        error = -dist.log_prob(y_true)
+        loss = tf.reduce_sum(pixel_weights*error)
+
         return loss
 
     return loss
