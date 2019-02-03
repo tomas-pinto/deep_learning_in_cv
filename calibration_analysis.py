@@ -75,8 +75,8 @@ for (X,y) in generate_data(files,1,x2y,rgb2label,x_dir,y_dir):
   n_bin = np.max(prediction[mask==1],axis=1)
 
   # fill bins
-  range_min = [0.0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95]
-  range_max = [0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1.0]
+  range_min = [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+  range_max = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
 
   for j in range(len(range_min)):
     cropped_pred = n_bin[n_bin < range_max[j]]
