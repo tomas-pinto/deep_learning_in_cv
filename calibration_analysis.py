@@ -9,8 +9,8 @@ from losses import weighted_categorical_crossentropy
 
 ## HOW TO CALL ##
 # Type in cmd (first for temperature, second for dirichlet):
-# python calibration_analysis.py 't' float(desired_T)
-# python calibration_analysis.py 'd'
+# python calibration_analysis.py 't' float(desired_T) 'baseline_weights'
+# python calibration_analysis.py 'd' 'dirichlet_weights'
 
 ## LOAD CAMVID ##
 # Create a Dictionary of filenames that maps input x to labels y
@@ -31,12 +31,12 @@ model = mobilenetV2(input_shape=(720, 960, 3), classes=12, alpha=1., reg=0.0, d=
 
 ## COMPILE MODEL ##
 if sys.argv[1] == 't':
-  weights_name = 'baseline_weights'
+  weights_name = sys.argv[3]#'baseline_weights'
   T = float(sys.argv[2])
   print("Running Calibration Analysis for Baseline Model with a temperature of {}".format(T))
 elif sys.argv[1] == 'd':
   print("Running Calibration Analysis for Dirichlet Model")
-  weights_name = 'dirichlet_weights'
+  weights_name = sys.argv[2]#'dirichlet_weights'
 
 ## LOAD WEIGHTS ##
 model.load_weights("./Weights/{}.h5".format(weights_name))
