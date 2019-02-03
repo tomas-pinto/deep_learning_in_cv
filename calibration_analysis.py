@@ -52,9 +52,9 @@ if sys.argv[1] == 't':
 files = test_files + val_files
 batch_size = 1
 
-sum_bin = np.zeros((20,))
-count_right = np.zeros((20,))
-total = np.zeros((20,))
+sum_bin = np.zeros((10,))
+count_right = np.zeros((10,))
+total = np.zeros((10,))
 
 files = test_files + val_files
 i = 0
