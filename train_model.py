@@ -150,7 +150,7 @@ csv_logger = CSVLogger("./Logs/logs.csv", append=True, separator=';')
 
 # Define Training
 model.fit_generator(
-    generate_data(train_files,3,x2y,rgb2label),
+    generator,
     epochs = 150,
     verbose = 1,
     callbacks = [checkpoint, csv_logger, LearningRateScheduler(lambda epoch:  initial_lr * update ** (epoch), verbose = 1)],
