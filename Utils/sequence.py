@@ -41,7 +41,7 @@ class generate_data(keras.utils.Sequence):
         self.shuffle = True
         self.batch_size = batch_size
         self.n_classes = 12
-        self.data_aug = data_aug
+        self.data_augmentation = data_aug
         self.dirichlet = dirichlet
 
 	    # Set mean and std of dataset
