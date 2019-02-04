@@ -138,7 +138,7 @@ model.compile(
              cyclist_acc_metric])
 
 ## LOAD MODEL ##
-if len(sys.argv) == 5:
+if len(sys.argv) == 6:
     weight_name = sys.argv[5]
     model.load_weights("./Weights/{}.h5".format(weight_name))
 
