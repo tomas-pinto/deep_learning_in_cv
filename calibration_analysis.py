@@ -6,11 +6,6 @@ from Utils.load_camvid import make_x2y, make_rgb2label, make_set
 from Utils.sequence import generate_data
 from Utils.model import calibration_softmax, relu6, mobilenetV2
 
-## HOW TO CALL ##
-# Type in cmd (first for temperature, second for dirichlet):
-# python calibration_analysis.py 't' float(desired_T) 'baseline_weights'
-# python calibration_analysis.py 'd' 'dirichlet_weights'
-
 ## LOAD CAMVID ##
 # Create a Dictionary of filenames that maps input x to labels y
 x_dir = './CamVid/701_StillsRaw_full'
