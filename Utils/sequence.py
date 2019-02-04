@@ -91,7 +91,7 @@ class generate_data(keras.utils.Sequence):
         y_train_files_batch = [self.y_dir+'/'+self.x2y[img_name] for img_name in train_files_batch]
         y_rgb = np.array([plt.imread(img_name) for img_name in y_train_files_batch])
 
-		if self.data_augmentation == True:
+        if self.data_augmentation == True:
 			x = np.empty([y_rgb.shape[0]*12, 240, 240, 3])
 			y = np.empty([y_rgb.shape[0]*12, 240, 240, 3])
 
