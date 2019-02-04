@@ -1,6 +1,14 @@
-## LOAD CAMVID ##
-from Utils.load_camvid import make_x2y, make_rgb2label, make_set
+import keras
+import numpy as np
 
+from keras.models import load_model
+from Utils.load_camvid import make_x2y, make_rgb2label, make_set
+from Utils.metrics import MeanIoU, IoU, single_class_accuracy
+from Utils.model import relu6, mobilenetV2
+from Utils.losses import weighted_categorical_crossentropy
+from Utils.sequence import generate_data
+
+## LOAD CAMVID ##
 # Create a Dictionary of filenames that maps input x to labels y
 x_dir = './CamVid/701_StillsRaw_full'
 y_dir = './CamVid/LabeledApproved_full'
@@ -15,14 +23,10 @@ val_files = make_set("./CamVid/val.txt")
 test_files = make_set("./CamVid/test.txt")
 
 ## BUILD MODEL ##
-from model import relu6, mobilenetV2
 model = mobilenetV2(input_shape=(720, 960, 3), classes=12, alpha=1., reg=0.0001, d=0.1)
 model.summary()
 
 ## DEFINE METRICS AND WEIGHTS LOSS FUNCTION ##
-from metrics import MeanIoU, IoU, single_class_accuracy
-import numpy as np
-
 num_classes = 12
 miou_metric = MeanIoU(num_classes)
 void_iou_metric = IoU(num_classes,0)
@@ -70,10 +74,6 @@ weights = np.array([0,
                     4.1312313079834])
 
 ## COMPILE MODEL ##
-from losses import weighted_categorical_crossentropy
-import numpy as np
-import keras
-
 # Define Loss and Optimizer
 model.compile(
     loss=weighted_categorical_crossentropy(weights),
@@ -106,11 +106,9 @@ model.compile(
              cyclist_acc_metric])
 
 ## LOAD WEIGHTS ##
-from keras.models import load_model
 name = 'baseline_weights' #Change this name to load the best model
 model.load_weights("./Weights/{}.h5".format(name))
 
 ## EVALUATE MODEL ##
-from sequence import generate_data
 test_accuracy = model.evaluate_generator(generate_data(test_files[0:1],1,x2y,rgb2label,x_dir,y_dir))
 print(test_accuracy)

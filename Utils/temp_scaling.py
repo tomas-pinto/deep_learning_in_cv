@@ -1,6 +1,6 @@
 from scipy.optimize import minimize
 from sklearn.metrics import log_loss
-from model import calibration_softmax
+from Utils.model import calibration_softmax
 
 class TemperatureScaling():
 
