@@ -1,5 +1,6 @@
 ## CUSTOM LOSS FUNCTIONS ##
 from keras import backend as K
+import tensorflow as tf
 
 # Weighted crossentropy loss #
 def weighted_categorical_crossentropy(weights):
