@@ -36,14 +36,16 @@ test_files = make_set("./CamVid/test.txt")
 if sys.argv[1] == 'data_augmentation':
     model = mobilenetV2(input_shape=(240, 240, 3), classes=12,
                         alpha=1., reg=float(sys.argv[2]), d=float(sys.argv[3]))
-    generator = generate_data(train_files,3,x2y,x_dir, y_dir, dirichlet=False, data_aug=True)
+    generator = generate_data(train_files,3,x2y,rgb2label,
+                              x_dir,y_dir, dirichlet=False, data_aug=True)
     initial_lr = 0.001
     update = 0.995
 
 elif sys.argv[2] == 'finetuning':
     model = mobilenetV2(input_shape=(720, 960, 3), classes=12,
                         alpha=1., reg=float(sys.argv[2]), d=float(sys.argv[3]))
-    generator = generate_data(train_files,3,x2y,x_dir, y_dir, dirichlet=False, data_aug=False)
+    generator = generate_data(train_files,3,x2y,rgb2label,
+                              x_dir,y_dir, dirichlet=False, data_aug=False)
     initial_lr = 0.0001
     update = 1
 
