@@ -14,17 +14,17 @@ from Utils.losses import weighted_categorical_crossentropy
 
 ## LOAD CAMVID ##
 # Create a Dictionary of filenames that maps input x to labels y
-x_dir = './ML-Datasets/CamVid/701_StillsRaw_full'
-y_dir = './ML-Datasets/CamVid/LabeledApproved_full'
+x_dir = './CamVid/701_StillsRaw_full'
+y_dir = './CamVid/LabeledApproved_full'
 x2y = make_x2y(x_dir,y_dir)
 
 # Create a Dictionary to convert rgb data to labeled data
-rgb2label = make_rgb2label('./ML-Datasets/CamVid/label_colors.txt')
+rgb2label = make_rgb2label('./CamVid/label_colors.txt')
 
 # Get the training, validation and test sets
-train_files = make_set("./ML-Datasets/CamVid/train.txt")
-val_files = make_set("./ML-Datasets/CamVid/val.txt")
-test_files = make_set("./ML-Datasets/CamVid/test.txt")
+train_files = make_set("./CamVid/train.txt")
+val_files = make_set("./CamVid/val.txt")
+test_files = make_set("./CamVid/test.txt")
 
 ## BUILD MODEL ##
 model = mobilenetV2(input_shape=(720, 960, 3), classes=12, alpha=1., reg=0.0, d=0.0)
