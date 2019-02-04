@@ -35,7 +35,7 @@ def _data_augmentation(input_image, output_image):
 # Define the Keras sequence that generates batches for training and validation
 class generate_data(keras.utils.Sequence):
     def __init__(self, train_files, batch_size,
-				x2y, rgb2label, x_dir, y_dir, dirichlet, data_aug=False):
+				x2y, rgb2label, x_dir, y_dir, dirichlet=False, data_aug=False):
 
         # Set batch size
         self.shuffle = True

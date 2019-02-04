@@ -29,13 +29,17 @@ test_files = make_set("./CamVid/test.txt")
 model = mobilenetV2(input_shape=(720, 960, 3), classes=12, alpha=1., reg=0.0, d=0.0)
 
 ## COMPILE MODEL ##
+files = test_files + val_files
+
 if sys.argv[1] == 't':
-  weights_name = sys.argv[3]#'baseline_weights'
+  weights_name = sys.argv[3] #'baseline_weights'
   T = float(sys.argv[2])
+  generator = generate_data(files,1,x2y,rgb2label,x_dir,y_dir)
   print("Running Calibration Analysis for Baseline Model with a temperature of {}".format(T))
 elif sys.argv[1] == 'd':
   print("Running Calibration Analysis for Dirichlet Model")
-  weights_name = sys.argv[2]#'dirichlet_weights'
+  weights_name = sys.argv[2] #'dirichlet_weights'
+  generator = generate_data(files,1,x2y,rgb2label,x_dir,y_dir,dirichlet=True)
 
 ## LOAD WEIGHTS ##
 model.load_weights("./Weights/{}.h5".format(weights_name))
@@ -48,16 +52,12 @@ if sys.argv[1] == 't':
   model = keras.models.Model(inputs=i, outputs=[o])
 
 ## CALIBRATION ANALYSIS ##
-files = test_files + val_files
-batch_size = 1
-
 sum_bin = np.zeros((10,))
 count_right = np.zeros((10,))
 total = np.zeros((10,))
 
-files = test_files + val_files
 i = 0
-for (X,y) in generate_data(files,1,x2y,rgb2label,x_dir,y_dir):
+for (X,y) in generator:
 
   if sys.argv[1] == 't': # Temperature
     prediction = calibration_softmax(model.predict(X,steps=1)/T)
