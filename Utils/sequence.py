@@ -2,6 +2,7 @@ import keras
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import cv2
 
 # DATA AUGMENTATION #
 # Randomly crop the image to a specific size. For data augmentation
@@ -42,7 +43,7 @@ class generate_data(keras.utils.Sequence):
         self.n_classes = 12
 		self.data_aug = data_aug
 		self.dirichlet = dirichlet
-		
+
 	# Set mean and std of dataset
         self.mean = [0.41189489566336, 0.4251328133025, 0.4326707089857]
         self.std = [0.27413549931506, 0.28506257482912, 0.28284674400252]

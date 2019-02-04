@@ -4,7 +4,6 @@ from __future__ import print_function
 
 import os
 import matplotlib.pyplot as plt
-import cv2
 import numpy as np
 import keras
 import pandas as pd
