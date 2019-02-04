@@ -158,4 +158,4 @@ model.fit_generator(
     epochs = 150,
     verbose = 1,
     callbacks = [checkpoint, csv_logger, LearningRateScheduler(lambda epoch:  initial_lr * update ** (epoch), verbose = 1)],
-    validation_data=generate_data(val_files,3,x2y,rgb2label))
+    validation_data=val_generator)
