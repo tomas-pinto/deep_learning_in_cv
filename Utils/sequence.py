@@ -92,20 +92,20 @@ class generate_data(keras.utils.Sequence):
         y_rgb = np.array([plt.imread(img_name) for img_name in y_train_files_batch])
 
         if self.data_augmentation == True:
-			x = np.empty([y_rgb.shape[0]*12, 240, 240, 3])
-			y = np.empty([y_rgb.shape[0]*12, 240, 240, 3])
+            x = np.empty([y_rgb.shape[0]*12, 240, 240, 3])
+            y = np.empty([y_rgb.shape[0]*12, 240, 240, 3])
 
 			#Data Augmentation
-			i = 0
-			for b in range(y_rgb.shape[0]):
-				for _ in range(12):
-					z,w = _data_augmentation(x_rgb[b], y_rgb[b])
-			        x[i,:,:,:] = z*255
-			        y[i,:,:,:] = w*255
-			        i += 1
+            i = 0
+            for b in range(y_rgb.shape[0]):
+                for _ in range(12):
+                    z,w = _data_augmentation(x_rgb[b], y_rgb[b])
+                    x[i,:,:,:] = z*255
+                    y[i,:,:,:] = w*255
+                    i += 1
 
-			x_rgb = x/255
-		    y_rgb = y/255
+            x_rgb = x/255
+            y_rgb = y/255
 
 	    # Normalize input tensor
         x_rgb = (x_rgb - self.mean)/self.std
@@ -119,10 +119,10 @@ class generate_data(keras.utils.Sequence):
                 for col in range(y_rgb.shape[2]):
                     y_one_hot[batch][row][col][self.rgb2label[tuple((y_rgb[batch][row][col]*255).reshape(1, -1)[0])]] = 1
 
-		if self.dirichlet == True:
+        if self.dirichlet == True:
 			# Laplacian Smoothing
-	        lap_smo_par = 0.000001
-	        temp = 1 + lap_smo_par * self.n_classes
-	        y_one_hot = (y_one_hot + lap_smo_par)/temp
+            lap_smo_par = 0.000001
+            temp = 1 + lap_smo_par * self.n_classes
+            y_one_hot = (y_one_hot + lap_smo_par)/temp
 
         return x_rgb, y_one_hot
