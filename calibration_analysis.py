@@ -5,7 +5,6 @@ import numpy as np
 from Utils.load_camvid import make_x2y, make_rgb2label, make_set
 from Utils.sequence import generate_data
 from Utils.model import calibration_softmax, relu6, mobilenetV2
-from Utils.losses import weighted_categorical_crossentropy
 
 ## HOW TO CALL ##
 # Type in cmd (first for temperature, second for dirichlet):

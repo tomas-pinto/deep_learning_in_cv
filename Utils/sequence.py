@@ -1,16 +1,48 @@
 import keras
 import numpy as np
 import matplotlib.pyplot as plt
+import random
+
+# DATA AUGMENTATION #
+# Randomly crop the image to a specific size. For data augmentation
+def _random_crop(image, label, crop_height, crop_width):
+    if (image.shape[0] != label.shape[0]) or (image.shape[1] != label.shape[1]):
+        raise Exception('Image and label must have the same dimensions!')
+
+    if (crop_width <= image.shape[1]) and (crop_height <= image.shape[0]):
+        x = random.randint(0, image.shape[1]-crop_width)
+        y = random.randint(0, image.shape[0]-crop_height)
+
+        if len(label.shape) == 3:
+            return image[y:y+crop_height, x:x+crop_width, :], label[y:y+crop_height, x:x+crop_width, :]
+        else:
+            return image[y:y+crop_height, x:x+crop_width, :], label[y:y+crop_height, x:x+crop_width]
+    else:
+        raise Exception('Crop shape exceeds image dimensions!')
+
+def _data_augmentation(input_image, output_image):
+    # Data augmentation
+    input_image, output_image = _random_crop(input_image, output_image, 240, 240)
+    if random.randint(0,1):
+        input_image  = cv2.flip(input_image, 1)
+        output_image = cv2.flip(output_image, 1)
+
+    return input_image, output_image
+
 
 ## GENERATOR ##
 # Define the Keras sequence that generates batches for training and validation
 class generate_data(keras.utils.Sequence):
-    def __init__(self, train_files, batch_size, x2y, rgb2label,x_dir,y_dir):
+    def __init__(self, train_files, batch_size,
+				x2y, rgb2label, x_dir, y_dir, dirichlet, data_aug=False):
+
         # Set batch size
         self.shuffle = True
         self.batch_size = batch_size
         self.n_classes = 12
-
+		self.data_aug = data_aug
+		self.dirichlet = dirichlet
+		
 	# Set mean and std of dataset
         self.mean = [0.41189489566336, 0.4251328133025, 0.4326707089857]
         self.std = [0.27413549931506, 0.28506257482912, 0.28284674400252]
@@ -58,6 +90,22 @@ class generate_data(keras.utils.Sequence):
         y_train_files_batch = [self.y_dir+'/'+self.x2y[img_name] for img_name in train_files_batch]
         y_rgb = np.array([plt.imread(img_name) for img_name in y_train_files_batch])
 
+		if self.data_augmentation == True:
+			x = np.empty([y_rgb.shape[0]*12, 240, 240, 3])
+			y = np.empty([y_rgb.shape[0]*12, 240, 240, 3])
+
+			#Data Augmentation
+			i = 0
+			for b in range(y_rgb.shape[0]):
+				for _ in range(12):
+					z,w = _data_augmentation(x_rgb[b], y_rgb[b])
+			        x[i,:,:,:] = z*255
+			        y[i,:,:,:] = w*255
+			        i += 1
+
+			x_rgb = x/255
+		    y_rgb = y/255
+
 	    # Normalize input tensor
         x_rgb = (x_rgb - self.mean)/self.std
 
@@ -69,5 +117,11 @@ class generate_data(keras.utils.Sequence):
             for row in range(y_rgb.shape[1]):
                 for col in range(y_rgb.shape[2]):
                     y_one_hot[batch][row][col][self.rgb2label[tuple((y_rgb[batch][row][col]*255).reshape(1, -1)[0])]] = 1
+
+		if self.dirichlet == True:
+			# Laplacian Smoothing
+	        lap_smo_par = 0.000001
+	        temp = 1 + lap_smo_par * self.n_classes
+	        y_one_hot = (y_one_hot + lap_smo_par)/temp
 
         return x_rgb, y_one_hot
