@@ -2,10 +2,10 @@ import sys
 import keras
 import numpy as np
 
-from load_camvid import make_x2y, make_rgb2label, make_set
-from sequence import generate_data
-from model import calibration_softmax, relu6, mobilenetV2
-from losses import weighted_categorical_crossentropy
+from Utils.load_camvid import make_x2y, make_rgb2label, make_set
+from Utils.sequence import generate_data
+from Utils.model import calibration_softmax, relu6, mobilenetV2
+from Utils.losses import weighted_categorical_crossentropy
 
 ## HOW TO CALL ##
 # Type in cmd (first for temperature, second for dirichlet):
