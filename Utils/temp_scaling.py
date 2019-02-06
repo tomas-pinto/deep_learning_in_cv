@@ -62,7 +62,7 @@ class TemperatureScaling():
         self.temp = temp
         self.maxiter = maxiter
         self.solver = solver
-
+        print(loss)
         if loss == 'nll':
             self.loss = self._nll_loss_fun
             print("nll")
