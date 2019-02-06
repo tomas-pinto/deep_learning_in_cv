@@ -50,3 +50,4 @@ for files in files_split:
     # Find temperature by minimizing chosen Loss
     a = TemperatureScaling(model)
     a.fit(prediction,y)
+    print("Done")
