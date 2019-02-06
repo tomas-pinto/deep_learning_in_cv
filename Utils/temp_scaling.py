@@ -62,12 +62,18 @@ class TemperatureScaling():
         self.temp = temp
         self.maxiter = maxiter
         self.solver = solver
+
         if loss == 'nll':
             self.loss = self._nll_loss_fun
+            print("nll")
         elif loss == 'ece':
             self.loss = self._ece_loss_fun
+            print("ece")
         elif loss == 'mce':
             self.loss = self._mce_loss_fun
+            print("mce")
+        else:
+            print("nothing")
 
     def _nll_loss_fun(self, x, probs, true):
         prediction = self.predict(probs, x)
