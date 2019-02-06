@@ -4,7 +4,7 @@ from Utils.model import calibration_softmax
 
 class TemperatureScaling():
 
-    def __init__(self, temp = 1., maxiter = 50, solver = "L-BFGS-B"):
+    def __init__(self, temp = 1., maxiter = 20, solver = "L-BFGS-B"):
         """
         Initialize class
 
