@@ -1,4 +1,5 @@
 ## LOAD CAMVID ##
+import sys
 import keras
 import random
 import numpy as np
@@ -26,7 +27,7 @@ model = mobilenetV2(input_shape=(720, 960, 3), classes=12, alpha=1., reg=0.0, d=
 model.summary()
 
 ## LOAD WEIGHTS ##
-name = 'baseline_weights' #Change this name to load the best model
+name = sys.argv[1] #Change this name to load the best model
 model.load_weights("./Weights/{}.h5".format(name))
 
 ## POP LAST LAYER ##
@@ -35,23 +36,18 @@ i = model.input
 o = model.layers[-1].output
 model = keras.models.Model(inputs=i, outputs=[o])
 
-# Define the batch to analyze
 files = val_files
-batch_size = len(file)
 
-_,y = generate_data(file,batch_size,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
+batch_size = len(files)
+
+#generator = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir)
+_,y = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
 print(y.shape)
 
-prediction = model.predict_generator(generate_data(file,batch_size,x2y,rgb2label,x_dir,y_dir))
+prediction = model.predict_generator(generate_data(files,1,x2y,rgb2label,x_dir,y_dir))
 print(prediction.shape)
 
-# flatten logits and ground truth
-prediction = np.reshape(prediction,(batch_size*720*960,12))
-y = np.reshape(y,(batch_size*720*960,12))
-
-print(y.shape)
-print(prediction.shape)
-
-# Find temperature by minimizing NLL Loss
-a = TemperatureScaling(model)
+# Find temperature by minimizing chosen Loss
+loss = sys.argv[2]
+a = TemperatureScaling(model,loss)
 a.fit(prediction,y)
