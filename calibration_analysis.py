@@ -24,7 +24,7 @@ test_files = make_set("./CamVid/test.txt")
 model = mobilenetV2(input_shape=(720, 960, 3), classes=12, alpha=1., reg=0.0, d=0.0)
 
 ## COMPILE MODEL ##
-files = test_files #+ val_files
+files = val_files[0:10] #+ val_files
 
 if sys.argv[1] == 't':
   weights_name = sys.argv[3] #'baseline_weights'

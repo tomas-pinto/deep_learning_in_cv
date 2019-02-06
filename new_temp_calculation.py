@@ -30,8 +30,8 @@ name = 'baseline_weights' #Change this name to load the best model
 model.load_weights("./Weights/{}.h5".format(name))
 
 # Shuffle Test+Val sets
-random.shuffle(val_files)
-files = val_files[0:30]
+#random.shuffle(val_files)
+files = val_files[0:10]
 batch_size = len(files)
 
 ## POP LAST LAYER ##
