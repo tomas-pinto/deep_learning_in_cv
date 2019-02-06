@@ -35,26 +35,13 @@ def _calculate_calibration(prediction,y):
     ece = sum((total * gap)/sum(total))
     mce = np.max(gap)
 
-    return ece, mce
-
-def _calculate_nll(prediction,y):
-    # flatten logits and ground truth
-    c = np.argmax(y,axis=3)
-    mask = (c != 0) + 0 # make void mask
-
-    #prediction = np.reshape(prediction[mask==1],(batch_size*720*960,12))
-    #y = np.reshape(y[mask==1],(batch_size*720*960,12))
-
-    nll = log_loss(y_true=y[mask==1], y_pred=prediction[mask==1])
-
-    return nll
+    return mce
 
 class TemperatureScaling():
 
     def __init__(self, temp = 1., maxiter = 20, solver = "L-BFGS-B"):
         """
         Initialize class
-
         Params:
             temp (float): starting temperature, default 1
             maxiter (int): maximum iterations done by optimizer, however 8 iterations have been maximum.
@@ -62,58 +49,26 @@ class TemperatureScaling():
         self.temp = temp
         self.maxiter = maxiter
         self.solver = solver
-        print(loss)
-        if self.chosen_loss == 'nll':
-            self.loss = self._nll_loss_fun
-            print("nll")
-        elif self.chosen_loss == 'ece':
-            self.loss = self._ece_loss_fun
-            print("ece")
-        elif self.chosen_loss == 'mce':
-            self.loss = self._mce_loss_fun
-            print("mce")
-        else:
-            print("nothing")
 
-    def _nll_loss_fun(self, x, probs, true):
+    def _loss_fun(self, x, probs, true):
         prediction = self.predict(probs, x)
-        nll = _calculate_nll(prediction,true)
-        loss = nll
-        print("Temp: ", x, " Loss: ", loss)
-
-        return loss
-
-    def _ece_loss_fun(self, x, probs, true):
-        prediction = self.predict(probs, x)
-        ece, mce = _calculate_calibration(prediction,true)
-        loss = ece
-        print("Temp: ", x, " Loss: ", loss)
-
-        return loss
-
-    def _mce_loss_fun(self, x, probs, true):
-        prediction = self.predict(probs, x)
-        ece, mce = _calculate_calibration(prediction,true)
-        loss = ece
-        print("Temp: ", x, " Loss: ", loss)
-
-        return loss
+        ece = calculate_calibration(prediction,true)
+        print("Temp: ", x, " ECE: ", ece)
+        return ece
 
     # Find the temperature
     def fit(self, logits, true):
         """
         Trains the model and finds optimal temperature
-
         Params:
             logits: the output from neural network for each class (shape [samples, classes])
             true: one-hot-encoding of true labels.
-
         Returns:
             the results of optimizer after minimizing is finished.
         """
 
         #true = true.flatten() # Flatten y_val
-        opt = minimize(self.loss, x0 = 1.0, args=(logits, true), options={'maxiter':20}, method = self.solver)
+        opt = minimize(self._loss_fun, x0 = 1.0, args=(logits, true), options={'maxiter':20}, method = self.solver)
         self.temp = opt.x[0]
 
         return opt
@@ -121,11 +76,9 @@ class TemperatureScaling():
     def predict(self, logits, temp = None):
         """
         Scales logits based on the temperature and returns calibrated probabilities
-
         Params:
             logits: logits values of data (output from neural network) for each class (shape [samples, classes])
             temp: if not set use temperatures find by model or previously set.
-
         Returns:
             calibrated probabilities (nd.array with shape [samples, classes])
         """
