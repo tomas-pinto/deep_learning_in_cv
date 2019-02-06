@@ -51,7 +51,7 @@ def _calculate_nll(prediction,y):
 
 class TemperatureScaling():
 
-    def __init__(self, chosen_loss, temp = 1., maxiter = 20, solver = "L-BFGS-B"):
+    def __init__(self, temp = 1., maxiter = 20, solver = "L-BFGS-B"):
         """
         Initialize class
 
@@ -63,13 +63,13 @@ class TemperatureScaling():
         self.maxiter = maxiter
         self.solver = solver
         print(loss)
-        if loss == 'nll':
+        if self.chosen_loss == 'nll':
             self.loss = self._nll_loss_fun
             print("nll")
-        elif loss == 'ece':
+        elif self.chosen_loss == 'ece':
             self.loss = self._ece_loss_fun
             print("ece")
-        elif loss == 'mce':
+        elif self.chosen_loss == 'mce':
             self.loss = self._mce_loss_fun
             print("mce")
         else:

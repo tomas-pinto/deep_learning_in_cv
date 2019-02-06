@@ -47,6 +47,8 @@ print(y.shape)
 prediction = model.predict_generator(generate_data(files,1,x2y,rgb2label,x_dir,y_dir))
 print(prediction.shape)
 
+model.chosen_loss = sys.argv[2]
+
 # Find temperature by minimizing chosen Loss
-a = TemperatureScaling(model,chosen_loss=sys.argv[2])
+a = TemperatureScaling(model)
 a.fit(prediction,y)

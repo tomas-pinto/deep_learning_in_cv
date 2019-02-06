@@ -43,7 +43,7 @@ if sys.argv[1] == 'data_augmentation':
     initial_lr = 0.001
     update = 0.995
 
-elif sys.argv[2] == 'finetuning':
+elif sys.argv[1] == 'finetuning':
     model = mobilenetV2(input_shape=(720, 960, 3), classes=12,
                         alpha=1., reg=float(sys.argv[2]), d=float(sys.argv[3]))
     generator = generate_data(train_files,3,x2y,rgb2label,
