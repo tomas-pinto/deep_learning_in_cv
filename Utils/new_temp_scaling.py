@@ -19,7 +19,7 @@ class TemperatureScaling():
     def _loss_fun(self, x, generator):
         # Calculates the loss using log-loss (cross-entropy loss)
         X,y = generator.__getitem__(self.i)
-        prediction = calibration_softmax(model.predict(X,steps=1)/x)
+        prediction = calibration_softmax(self.predict(X,steps=1)/x)
 
         c = np.argmax(y,axis=3)
         mask = (c != 0) + 0 # make void mask
@@ -50,7 +50,7 @@ class TemperatureScaling():
         # ECE
         ece = sum((total * gap)/sum(total))
         print("Temp: ", x, " ECE: ", ece)
-        
+
         return ece
 
     # Find the temperature
