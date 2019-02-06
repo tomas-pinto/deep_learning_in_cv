@@ -51,7 +51,7 @@ def _calculate_nll(prediction,y):
 
 class TemperatureScaling():
 
-    def __init__(self, loss, temp = 1., maxiter = 20, solver = "L-BFGS-B"):
+    def __init__(self, chosen_loss, temp = 1., maxiter = 20, solver = "L-BFGS-B"):
         """
         Initialize class
 
