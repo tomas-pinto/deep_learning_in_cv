@@ -29,13 +29,18 @@ model.summary()
 name = 'baseline_weights' #Change this name to load the best model
 model.load_weights("./Weights/{}.h5".format(name))
 
+# Shuffle Test+Val sets
+random.shuffle(val_files)
+files = val_files[0:10]
+batch_size = len(files)
+
 ## POP LAST LAYER ##
 model.layers.pop()
 i = model.input
 o = model.layers[-1].output
 model = keras.models.Model(inputs=i, outputs=[o])
 
-generator = generate_data(val_files,2,x2y,rgb2label,x_dir,y_dir)
+generator = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir)
 
 # Find temperature by minimizing NLL Loss
 a = TemperatureScaling(model)
