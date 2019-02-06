@@ -35,19 +35,17 @@ i = model.input
 o = model.layers[-1].output
 model = keras.models.Model(inputs=i, outputs=[o])
 
-files_split = [val_files[0:33], val_files[33:66], val_files[66:]]
+files = val_files[0:50]
 
-for files in files_split:
-    batch_size = len(files)
+batch_size = len(files)
 
-    #generator = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir)
-    _,y = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
-    print(y.shape)
+#generator = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir)
+_,y = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
+print(y.shape)
 
-    prediction = model.predict_generator(generate_data(files,1,x2y,rgb2label,x_dir,y_dir))
-    print(prediction.shape)
+prediction = model.predict_generator(generate_data(files,1,x2y,rgb2label,x_dir,y_dir))
+print(prediction.shape)
 
-    # Find temperature by minimizing chosen Loss
-    a = TemperatureScaling(model)
-    a.fit(prediction,y)
-    print("Done")
+# Find temperature by minimizing chosen Loss
+a = TemperatureScaling(model)
+a.fit(prediction,y)
