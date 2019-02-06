@@ -16,5 +16,5 @@ The objective was to compare the performance of Dirichlet output layers and Temp
 
 ## Temperature Calculation for a model:
 - Type in Command Line: python temp_calculation.py [weights] [loss]
-  - [loss] must be 'nll' (Negative Log Likelihood), 'mce' (Maximum Calibration Error) or 'ece'(Expected Calibration Error).
   - [weights] must be the name of the weight file and be in Weights folder
+  - [loss] must be 'nll' (Negative Log Likelihood), 'mce' (Maximum Calibration Error) or 'ece'(Expected Calibration Error).
