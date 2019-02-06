@@ -15,7 +15,6 @@ The objective was to compare the performance of Dirichlet output layers and Temp
   - [weights] must be the name of the weight file and be in Weights folder
 
 ## Temperature Calculation for a model:
-- Type in Command Line: python calibration_analysis.py [type_of_model] [desired_T] [weights]
-  - [type_of_model] must be 'd' for dirichlet model or 't' for baseline model with temperature scaling
-  - [desired_T] must be a number bigger than zero (this option is only available for baseline model)
+- Type in Command Line: python temp_calculation.py [weights] [loss]
+  - [loss] must be 'nll' (Negative Log Likelihood), 'mce' (Maximum Calibration Error) or 'ece'(Expected Calibration Error).
   - [weights] must be the name of the weight file and be in Weights folder
