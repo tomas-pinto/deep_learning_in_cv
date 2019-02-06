@@ -3,7 +3,7 @@ from Utils.model import calibration_softmax
 
 class TemperatureScaling():
 
-    def __init__(self, temp = 1., maxiter = 50, solver = "L-BFGS-B"):
+    def __init__(self, model, temp = 1., maxiter = 50, solver = "L-BFGS-B"):
         """
         Initialize class
 
@@ -14,12 +14,13 @@ class TemperatureScaling():
         self.temp = temp
         self.maxiter = maxiter
         self.solver = solver
+        self.model = model
         self.i = 0
 
     def _loss_fun(self, x, generator):
         # Calculates the loss using log-loss (cross-entropy loss)
         X,y = generator.__getitem__(self.i)
-        prediction = calibration_softmax(self.predict(X,steps=1)/x)
+        prediction = calibration_softmax(self.model.predict(X,steps=1)/x)
 
         c = np.argmax(y,axis=3)
         mask = (c != 0) + 0 # make void mask
