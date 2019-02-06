@@ -31,7 +31,7 @@ model.load_weights("./Weights/{}.h5".format(name))
 
 # Shuffle Test+Val sets
 #random.shuffle(val_files)
-files = val_files[0:10]
+files = test_files[0:10]
 batch_size = len(files)
 
 ## POP LAST LAYER ##
