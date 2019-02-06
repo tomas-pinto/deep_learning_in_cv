@@ -4,7 +4,7 @@ from Utils.model import calibration_softmax
 
 class TemperatureScaling():
 
-    def __init__(self, model, temp = 1., maxiter = 50, solver = "L-BFGS-B"):
+    def __init__(self, model, temp = 1., maxiter = 50, solver = "BFGS"):
         """
         Initialize class
 
@@ -72,7 +72,7 @@ class TemperatureScaling():
         """
 
         #true = true.flatten() # Flatten y_val
-        opt = minimize(self._loss_fun, x0 = 1.0, args=(generator), options={'maxiter':self.maxiter}, method = self.solver)
+        opt = minimize(self._loss_fun, x0 = 0.1, args=(generator), options={'maxiter':self.maxiter}, method = self.solver)
         self.temp = opt.x[0]
 
         return opt
