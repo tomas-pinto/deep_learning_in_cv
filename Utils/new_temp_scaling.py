@@ -38,7 +38,7 @@ def _calculate_ece(prediction,y):
 
 class TemperatureScaling():
 
-    def __init__(self, temp = 1., maxiter = 50, solver = "BFGS"):
+    def __init__(self, temp = 1., maxiter = 50, solver = "L-BFGS-B"):
         """
         Initialize class
 
@@ -70,7 +70,7 @@ class TemperatureScaling():
         """
 
         #true = true.flatten() # Flatten y_val
-        opt = minimize(self._loss_fun, x0 = 0.1, args=(generator), options={'maxiter':self.maxiter}, method = self.solver)
+        opt = minimize(self._loss_fun, x0 = 0.1, args=(logits, true), options={'maxiter':self.maxiter}, method = self.solver)
         self.temp = opt.x[0]
 
         return opt
