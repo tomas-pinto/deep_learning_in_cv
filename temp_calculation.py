@@ -36,19 +36,13 @@ o = model.layers[-1].output
 model = keras.models.Model(inputs=i, outputs=[o])
 
 # Define the batch to analyze
-files = test_files + val_files
-
-# Shuffle Test+Val sets
-random.shuffle(files)
-
-# Define the batch to analyze
-file = files[0:31]
+files = val_files
 batch_size = len(file)
 
 _,y = generate_data(file,batch_size,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
 print(y.shape)
 
-prediction = model.predict_generator(generate_data(file,1,x2y,rgb2label,x_dir,y_dir))
+prediction = model.predict_generator(generate_data(file,batch_size,x2y,rgb2label,x_dir,y_dir))
 print(prediction.shape)
 
 # flatten logits and ground truth
