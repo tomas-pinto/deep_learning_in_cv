@@ -29,24 +29,24 @@ model.summary()
 name = 'baseline_weights' #Change this name to load the best model
 model.load_weights("./Weights/{}.h5".format(name))
 
-# Shuffle Test+Val sets
-#random.shuffle(val_files)
-files = test_files[0:10]
-batch_size = len(files)
-
 ## POP LAST LAYER ##
 model.layers.pop()
 i = model.input
 o = model.layers[-1].output
 model = keras.models.Model(inputs=i, outputs=[o])
 
-#generator = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir)
-_,y = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
-print(y.shape)
+files_split = [val_files[0:33], val_files[33:66], val_files[66:]]
 
-prediction = model.predict_generator(generate_data(files,1,x2y,rgb2label,x_dir,y_dir))
-print(prediction.shape)
+for files in files_split:
+    batch_size = len(files)
 
-# Find temperature by minimizing NLL Loss
-a = TemperatureScaling(model)
-a.fit(prediction,y)
+    #generator = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir)
+    _,y = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
+    print(y.shape)
+
+    prediction = model.predict_generator(generate_data(files,1,x2y,rgb2label,x_dir,y_dir))
+    print(prediction.shape)
+
+    # Find temperature by minimizing chosen Loss
+    a = TemperatureScaling(model)
+    a.fit(prediction,y)
