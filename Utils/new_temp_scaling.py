@@ -22,7 +22,7 @@ class TemperatureScaling():
         count_right = np.zeros((10,))
         total = np.zeros((10,))
 
-        c = np.argmax(y,axis=3)
+        c = np.argmax(true,axis=3)
         mask = (c != 0) + 0 # make void mask
         acc = np.argmax(prediction[mask==1],axis=1) - c[mask==1]
         n_bin = np.max(prediction[mask==1],axis=1)
