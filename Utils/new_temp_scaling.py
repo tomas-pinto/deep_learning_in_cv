@@ -50,9 +50,8 @@ class TemperatureScaling():
         ece = sum((total * gap)/sum(total))
         print("ECE = {:.5f}".format(ece)
 
-        loss = ece
-        print("Temp: ", x, " Loss: ", loss)
-        return loss
+        print("Temp: ", x, " Loss: ", ece)
+        return ece
 
     # Find the temperature
     def fit(self, generator):
