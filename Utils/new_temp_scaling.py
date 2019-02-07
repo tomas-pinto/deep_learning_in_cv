@@ -54,7 +54,7 @@ class TemperatureScaling():
         return loss
 
     # Find the temperature
-    def fit(self, generator):
+    def fit(self, logits, true):
         """
         Trains the model and finds optimal temperature
         Params:
