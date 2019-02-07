@@ -1,10 +1,9 @@
-import numpy as np
 from scipy.optimize import minimize
 from Utils.model import calibration_softmax
 
 class TemperatureScaling():
 
-    def __init__(self, temp = 1., maxiter = 20, solver = "L-BFGS-B"):
+    def __init__(self, temp = 1., maxiter = 50, solver = "L-BFGS-B"):
         """
         Initialize class
         Params:
@@ -14,15 +13,14 @@ class TemperatureScaling():
         self.temp = temp
         self.maxiter = maxiter
         self.solver = solver
+        self.i = 0
 
-    def _loss_fun(self, x, probs, true):
-        prediction = self._predict(probs, x)
+    def _loss_fun(self, x, generator):
+        # Calculates the loss using log-loss (cross-entropy loss)
+        X,y = generator.__getitem__(self.i)
+        prediction = calibration_softmax(model.predict(X,steps=1)/x)
 
-        sum_bin = np.zeros((10,))
-        count_right = np.zeros((10,))
-        total = np.zeros((10,))
-
-        c = np.argmax(true,axis=3)
+        c = np.argmax(y,axis=3)
         mask = (c != 0) + 0 # make void mask
         acc = np.argmax(prediction[mask==1],axis=1) - c[mask==1]
         n_bin = np.max(prediction[mask==1],axis=1)
@@ -42,18 +40,22 @@ class TemperatureScaling():
            sum_bin[j] = sum_bin[j] + sum(bin_sample)
            total[j] = total[j] + len(bin_sample)
 
+        self.i = self.i + 1
+
         confidence = (sum_bin/(total+1e-12))
         accuracy = (count_right/(total+1e-12))
         gap = np.abs(accuracy - confidence)
 
         # ECE
         ece = sum((total * gap)/sum(total))
+        print("ECE = {:.5f}".format(ece)
 
-        print("Temp: ", x, " ECE: ", ece)
-        return ece
+        loss = ece
+        print("Temp: ", x, " Loss: ", loss)
+        return loss
 
     # Find the temperature
-    def fit(self, logits, true):
+    def fit(self, generator):
         """
         Trains the model and finds optimal temperature
         Params:
@@ -64,22 +66,7 @@ class TemperatureScaling():
         """
 
         #true = true.flatten() # Flatten y_val
-        opt = minimize(self._loss_fun, x0 = 1.0, args=(logits, true), options={'maxiter':20}, method = self.solver)
+        opt = minimize(self._loss_fun, x0 = 0.1, args=(generator), options={'maxiter':self.maxiter}, method = self.solver)
         self.temp = opt.x[0]
 
         return opt
-
-    def _predict(self, logits, temp = None):
-        """
-        Scales logits based on the temperature and returns calibrated probabilities
-        Params:
-            logits: logits values of data (output from neural network) for each class (shape [samples, classes])
-            temp: if not set use temperatures find by model or previously set.
-        Returns:
-            calibrated probabilities (nd.array with shape [samples, classes])
-        """
-
-        if not temp:
-            return calibration_softmax(logits/self.temp)
-        else:
-            return calibration_softmax(logits/temp)
