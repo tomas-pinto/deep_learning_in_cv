@@ -2,7 +2,7 @@ import numpy as np
 from scipy.optimize import minimize
 from Utils.model import calibration_softmax
 
-def _calculate_ece(prediction,y):
+def _calculate_calibration(prediction,y):
     sum_bin = np.zeros((10,))
     count_right = np.zeros((10,))
     total = np.zeros((10,))
@@ -33,8 +33,9 @@ def _calculate_ece(prediction,y):
 
     # ECE
     ece = sum((total * gap)/sum(total))
+    mce = np.max(gap)
 
-    return ece
+    return ece,mce
 
 class TemperatureScaling():
 
@@ -51,9 +52,9 @@ class TemperatureScaling():
 
     def _loss_fun(self, x, probs, true):
         prediction = self.predict(probs, x)
-        ece = _calculate_ece(prediction,true)
-        print("Temp: ", x, " ECE: ", ece)
-        return ece
+        ece, mce = _calculate_calibration(prediction,true)
+        print("Temp: ", x, " Loss: ", mce)
+        return mce
 
     # Find the temperature
     def fit(self, logits, true):
