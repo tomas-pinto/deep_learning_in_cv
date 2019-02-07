@@ -17,6 +17,10 @@ class TemperatureScaling():
 
     def _loss_fun(self, x, probs, true):
         # Calculates the loss using log-loss (cross-entropy loss)
+        sum_bin = np.zeros((10,))
+        count_right = np.zeros((10,))
+        total = np.zeros((10,))
+        
         prediction = self.predict(probs, x)
 
         c = np.argmax(true,axis=3)
