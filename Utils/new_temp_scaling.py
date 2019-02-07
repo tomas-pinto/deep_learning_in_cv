@@ -51,7 +51,6 @@ class TemperatureScaling():
 
         # ECE
         ece = sum((total * gap)/sum(total))
-        print("ECE = {:.5f}".format(ece))
 
         loss = ece
         print("Temp: ", x, " Loss: ", loss)
