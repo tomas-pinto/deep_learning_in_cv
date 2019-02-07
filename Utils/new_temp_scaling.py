@@ -15,7 +15,7 @@ class TemperatureScaling():
         self.maxiter = maxiter
         self.solver = solver
 
-    def _calculate_ece(prediction,y):
+    def _calculate_ece(self,prediction,y):
         sum_bin = np.zeros((10,))
         count_right = np.zeros((10,))
         total = np.zeros((10,))
