@@ -6,7 +6,7 @@ import numpy as np
 from Utils.sequence import generate_data
 from Utils.load_camvid import make_x2y, make_rgb2label, make_set
 from Utils.model import calibration_softmax, relu6, mobilenetV2
-from Utils.temp_scaling import TemperatureScaling
+from Utils.new_temp_scaling import TemperatureScaling
 
 # Create a Dictionary of filenames that maps input x to labels y
 x_dir = './CamVid/701_StillsRaw_full'
@@ -35,29 +35,17 @@ i = model.input
 o = model.layers[-1].output
 model = keras.models.Model(inputs=i, outputs=[o])
 
-# Define the batch to analyze
-files = test_files + val_files
+files = val_files
 
-# Shuffle Test+Val sets
-random.shuffle(files)
+batch_size = len(files)
 
-# Define the batch to analyze
-file = files[0:31]
-batch_size = len(file)
-
-_,y = generate_data(file,batch_size,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
+#generator = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir)
+_,y = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
 print(y.shape)
 
-prediction = model.predict_generator(generate_data(file,1,x2y,rgb2label,x_dir,y_dir))
+prediction = model.predict_generator(generate_data(files,1,x2y,rgb2label,x_dir,y_dir))
 print(prediction.shape)
 
-# flatten logits and ground truth
-prediction = np.reshape(prediction,(batch_size*720*960,12))
-y = np.reshape(y,(batch_size*720*960,12))
-
-print(y.shape)
-print(prediction.shape)
-
-# Find temperature by minimizing NLL Loss
+# Find temperature by minimizing chosen Loss
 a = TemperatureScaling(model)
 a.fit(prediction,y)
