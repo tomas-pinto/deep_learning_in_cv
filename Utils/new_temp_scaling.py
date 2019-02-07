@@ -15,7 +15,7 @@ class TemperatureScaling():
         self.maxiter = maxiter
         self.solver = solver
 
-    def _calculate_ece(self,prediction,y):
+    def calculate_ece(self,prediction,y):
         sum_bin = np.zeros((10,))
         count_right = np.zeros((10,))
         total = np.zeros((10,))
@@ -50,7 +50,7 @@ class TemperatureScaling():
         return ece
 
     def _loss_fun(self, x, probs, true):
-        prediction = self.predict(probs, x)
+        prediction = self._predict(probs, x)
         ece = self._calculate_ece(prediction,true)
         print("Temp: ", x, " ECE: ", ece)
         return ece
@@ -72,7 +72,7 @@ class TemperatureScaling():
 
         return opt
 
-    def predict(self, logits, temp = None):
+    def _predict(self, logits, temp = None):
         """
         Scales logits based on the temperature and returns calibrated probabilities
         Params:
