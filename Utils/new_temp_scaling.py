@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.optimize import minimize
+from sklearn.metrics import log_loss
 from Utils.model import calibration_softmax
 
 def _calculate_calibration(prediction,y):
@@ -52,14 +53,20 @@ class TemperatureScaling():
 
     def _loss_fun(self, x, probs, true, loss):
         prediction = self.predict(probs, x)
-        ece, mce = _calculate_calibration(prediction,true)
 
-        if loss == 'ece':
-            print("Temp: ", x, " ECE: ", ece)
-            chosen_loss = ece
-        elif loss == 'mce':
-            print("Temp: ", x, " MCE: ", mce)
-            chosen_loss = mce
+        if loss == 'nll':
+            chosen_loss = log_loss(y_true=true, y_pred=prediction)
+            print("Temp: ", x, " NLL: ", chosen_loss)
+
+        else:
+            ece, mce = _calculate_calibration(prediction,true)
+
+            if loss == 'ece':
+                print("Temp: ", x, " ECE: ", ece)
+                chosen_loss = ece
+            elif loss == 'mce':
+                print("Temp: ", x, " MCE: ", mce)
+                chosen_loss = mce
 
         return chosen_loss
 

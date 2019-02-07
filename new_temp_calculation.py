@@ -36,15 +36,20 @@ i = model.input
 o = model.layers[-1].output
 model = keras.models.Model(inputs=i, outputs=[o])
 
-files = val_files
+files = val_files[0:5]
 batch_size = len(files)
 
-#generator = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir)
 _,y = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
 print(y.shape)
 
 prediction = model.predict_generator(generate_data(files,1,x2y,rgb2label,x_dir,y_dir))
 print(prediction.shape)
+
+if sys.argv[1] == 'nll':
+    prediction = np.reshape(prediction,(batch_size*720*960,12))
+    y = np.reshape(y,(batch_size*720*960,12))
+    print(y.shape)
+    print(prediction.shape)
 
 # Find temperature by minimizing chosen Loss
 a = TemperatureScaling(model)
