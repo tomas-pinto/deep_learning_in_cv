@@ -17,7 +17,7 @@ class TemperatureScaling():
 
     def _loss_fun(self, x, generator):
         # Calculates the loss using log-loss (cross-entropy loss)
-        X,y = generator.__getitem__(self.i)
+        X,y = generator.__getitem__(0)
         prediction = calibration_softmax(model.predict(X,steps=1)/x)
 
         c = np.argmax(y,axis=3)
@@ -40,7 +40,7 @@ class TemperatureScaling():
            sum_bin[j] = sum_bin[j] + sum(bin_sample)
            total[j] = total[j] + len(bin_sample)
 
-        self.i = self.i + 1
+        #self.i = self.i + 1
 
         confidence = (sum_bin/(total+1e-12))
         accuracy = (count_right/(total+1e-12))
