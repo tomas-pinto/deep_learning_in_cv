@@ -13,14 +13,12 @@ class TemperatureScaling():
         self.temp = temp
         self.maxiter = maxiter
         self.solver = solver
-        self.i = 0
 
-    def _loss_fun(self, x, generator):
+    def _loss_fun(self, x, probs, true):
         # Calculates the loss using log-loss (cross-entropy loss)
-        X,y = generator.__getitem__(0)
-        prediction = calibration_softmax(self.predict(X,steps=1)/x)
+        prediction = self.predict(probs, x)
 
-        c = np.argmax(y,axis=3)
+        c = np.argmax(true,axis=3)
         mask = (c != 0) + 0 # make void mask
         acc = np.argmax(prediction[mask==1],axis=1) - c[mask==1]
         n_bin = np.max(prediction[mask==1],axis=1)
@@ -67,7 +65,22 @@ class TemperatureScaling():
         """
 
         #true = true.flatten() # Flatten y_val
-        opt = minimize(self._loss_fun, x0 = 0.1, args=(generator), options={'maxiter':self.maxiter}, method = self.solver)
+        opt = minimize(self._loss_fun, x0 = 0.1, args=(logits, true), options={'maxiter':self.maxiter}, method = self.solver)
         self.temp = opt.x[0]
 
         return opt
+
+    def predict(self, logits, temp = None):
+        """
+        Scales logits based on the temperature and returns calibrated probabilities
+        Params:
+            logits: logits values of data (output from neural network) for each class (shape [samples, classes])
+            temp: if not set use temperatures find by model or previously set.
+        Returns:
+            calibrated probabilities (nd.array with shape [samples, classes])
+        """
+
+        if not temp:
+            return calibration_softmax(logits/self.temp)
+        else:
+            return calibration_softmax(logits/temp)

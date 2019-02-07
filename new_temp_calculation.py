@@ -35,8 +35,12 @@ i = model.input
 o = model.layers[-1].output
 model = keras.models.Model(inputs=i, outputs=[o])
 
-generator = generate_data(val_files[0:2],2,x2y,rgb2label,x_dir,y_dir)
+_,y = generate_data(file,batch_size,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
+print(y.shape)
+
+prediction = model.predict_generator(generate_data(file,1,x2y,rgb2label,x_dir,y_dir))
+print(prediction.shape)
 
 # Find temperature by minimizing NLL Loss
 a = TemperatureScaling(model)
-a.fit(generator)
+a.fit(prediction,y)
