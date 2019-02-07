@@ -35,7 +35,7 @@ i = model.input
 o = model.layers[-1].output
 model = keras.models.Model(inputs=i, outputs=[o])
 
-files = val_files
+files = val_files[0:2]
 
 batch_size = len(files)
 
