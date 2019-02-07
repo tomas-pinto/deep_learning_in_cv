@@ -50,14 +50,21 @@ class TemperatureScaling():
         self.tol = tol
         self.solver = solver
 
-    def _loss_fun(self, x, probs, true):
+    def _loss_fun(self, x, probs, true, loss):
         prediction = self.predict(probs, x)
         ece, mce = _calculate_calibration(prediction,true)
-        print("Temp: ", x, " Loss: ", mce)
-        return mce
+
+        if loss == 'ece':
+            print("Temp: ", x, " ECE: ", ece)
+            chosen_loss = ece
+        elif loss == 'mce':
+            print("Temp: ", x, " MCE: ", mce)
+            chosen_loss = mce
+
+        return chosen_loss
 
     # Find the temperature
-    def fit(self, logits, true):
+    def fit(self, logits, true, loss):
         """
         Trains the model and finds optimal temperature
         Params:
@@ -68,7 +75,7 @@ class TemperatureScaling():
         """
 
         #true = true.flatten() # Flatten y_val
-        opt = minimize(self._loss_fun, x0 = 1.0, args=(logits, true), tol=self.tol, method = self.solver)
+        opt = minimize(self._loss_fun, x0 = 1.0, args=(logits, true, loss), tol=self.tol, method = self.solver)
         self.temp = opt.x[0]
 
         return opt

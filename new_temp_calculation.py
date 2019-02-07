@@ -1,4 +1,5 @@
 ## LOAD CAMVID ##
+import sys
 import keras
 import random
 import numpy as np
@@ -26,7 +27,7 @@ model = mobilenetV2(input_shape=(720, 960, 3), classes=12, alpha=1., reg=0.0, d=
 model.summary()
 
 ## LOAD WEIGHTS ##
-name = 'baseline_weights' #Change this name to load the best model
+name = sys.argv[2] #Change this name to load the best model
 model.load_weights("./Weights/{}.h5".format(name))
 
 ## POP LAST LAYER ##
@@ -48,4 +49,4 @@ print(prediction.shape)
 
 # Find temperature by minimizing chosen Loss
 a = TemperatureScaling(model)
-a.fit(prediction,y)
+a.fit(prediction,y,sys.argv[1])
