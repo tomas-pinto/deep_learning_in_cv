@@ -37,7 +37,6 @@ o = model.layers[-1].output
 model = keras.models.Model(inputs=i, outputs=[o])
 
 files = val_files
-
 batch_size = len(files)
 
 #generator = generate_data(files,batch_size,x2y,rgb2label,x_dir,y_dir)
