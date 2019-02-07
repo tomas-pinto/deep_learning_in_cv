@@ -42,7 +42,7 @@ files = test_files + val_files
 random.shuffle(files)
 
 # Define the batch to analyze
-file = files[0:31]
+file = files[0:2]
 batch_size = len(file)
 
 _,y = generate_data(file,batch_size,x2y,rgb2label,x_dir,y_dir).__getitem__(0)
