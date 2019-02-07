@@ -15,7 +15,9 @@ class TemperatureScaling():
         self.maxiter = maxiter
         self.solver = solver
 
-    def calculate_ece(self,prediction,y):
+    def _loss_fun(self, x, probs, true):
+        prediction = self._predict(probs, x)
+
         sum_bin = np.zeros((10,))
         count_right = np.zeros((10,))
         total = np.zeros((10,))
@@ -47,11 +49,6 @@ class TemperatureScaling():
         # ECE
         ece = sum((total * gap)/sum(total))
 
-        return ece
-
-    def _loss_fun(self, x, probs, true):
-        prediction = self._predict(probs, x)
-        ece = self._calculate_ece(prediction,true)
         print("Temp: ", x, " ECE: ", ece)
         return ece
 
