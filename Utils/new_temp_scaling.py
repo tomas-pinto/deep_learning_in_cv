@@ -4,7 +4,7 @@ from Utils.model import calibration_softmax
 
 class TemperatureScaling():
 
-    def __init__(self, temp = 1., maxiter = 10, solver = "L-BFGS-B"):
+    def __init__(self, temp = 1., tol = 0.001, solver = "L-BFGS-B"):
         """
         Initialize class
         Params:
@@ -12,7 +12,7 @@ class TemperatureScaling():
             maxiter (int): maximum iterations done by optimizer, however 8 iterations have been maximum.
         """
         self.temp = temp
-        self.maxiter = maxiter
+        self.tol = tol
         self.solver = solver
 
     def _loss_fun(self, x, probs, true):
@@ -20,7 +20,7 @@ class TemperatureScaling():
         sum_bin = np.zeros((10,))
         count_right = np.zeros((10,))
         total = np.zeros((10,))
-        
+
         prediction = self.predict(probs, x)
 
         c = np.argmax(true,axis=3)
@@ -70,7 +70,7 @@ class TemperatureScaling():
         """
 
         #true = true.flatten() # Flatten y_val
-        opt = minimize(self._loss_fun, x0 = 0.1, args=(logits, true), options={'maxiter':self.maxiter}, method = self.solver)
+        opt = minimize(self._loss_fun, x0 = 1.0, args=(logits, true), tol = self.tol, method = self.solver)
         self.temp = opt.x[0]
 
         return opt
