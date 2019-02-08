@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.optimize import minimize
-#from sklearn.metrics import log_loss
+from sklearn.metrics import log_loss
 from Utils.model import calibration_softmax
 
 def _calculate_calibration(prediction,y):
