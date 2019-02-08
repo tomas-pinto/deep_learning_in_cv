@@ -84,7 +84,7 @@ class TemperatureScaling():
         """
 
         #true = true.flatten() # Flatten y_val
-        opt = minimize(self._loss_fun, x0 = 1.0, args=(logits, true, loss), tol=self.tol, bounds=(0.01,20.0), method = self.solver)
+        opt = minimize(self._loss_fun, x0 = 1.0, args=(logits, true, loss), tol=self.tol, method = self.solver)
         self.temp = opt.x[0]
 
         return opt
