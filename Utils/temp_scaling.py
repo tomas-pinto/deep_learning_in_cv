@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.optimize import minimize
-from sklearn.metrics import log_loss
+#from sklearn.metrics import log_loss
 from Utils.model import calibration_softmax
 
 def _calculate_calibration(prediction,y):
@@ -57,7 +57,8 @@ class TemperatureScaling():
         if loss == 'nll':
             c = np.argmax(true,axis=1)
             mask = (c != 0) + 0 # make void mask
-            chosen_loss = log_loss(y_true=true[mask==1], y_pred=prediction[mask==1])
+            chosen_loss = np.sum(-np.log(np.sum(true[mask==1] * prediction[mask==1], axis=1)))
+            #chosen_loss = log_loss(y_true=true[mask==1], y_pred=prediction[mask==1])
             print("Temp: ", x, " NLL: ", chosen_loss)
 
         else:
