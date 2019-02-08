@@ -46,8 +46,8 @@ prediction = model.predict_generator(generate_data(files,1,x2y,rgb2label,x_dir,y
 print(prediction.shape)
 
 if sys.argv[1] == 'nll':
-    #prediction = np.reshape(prediction,(batch_size*720*960,12))
-    #y = np.reshape(y,(batch_size*720*960,12))
+    prediction = np.reshape(prediction,(batch_size*720*960,12))
+    y = np.reshape(y,(batch_size*720*960,12))
     print(y.shape)
     print(prediction.shape)
 

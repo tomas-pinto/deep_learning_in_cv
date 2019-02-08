@@ -55,7 +55,7 @@ class TemperatureScaling():
         prediction = self.predict(probs, x)
 
         if loss == 'nll':
-            c = np.argmax(true,axis=3)
+            c = np.argmax(true,axis=1)
             mask = (c != 0) + 0 # make void mask
             chosen_loss = log_loss(y_true=true[mask==1], y_pred=prediction[mask==1])
             print("Temp: ", x, " NLL: ", chosen_loss)
