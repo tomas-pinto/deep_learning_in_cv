@@ -37,9 +37,9 @@ if sys.argv[1] == 'data_augmentation':
     model = mobilenetV2(input_shape=(240, 240, 3), classes=12,
                         alpha=1., reg=float(sys.argv[2]), d=float(sys.argv[3]))
     generator = generate_data(train_files,2,x2y,rgb2label,
-                              x_dir,y_dir, dirichlet=False, data_aug=True)
+                              x_dir,y_dir, dirichlet=False, data_aug=True,val_data=False)
     val_generator = generate_data(val_files,2,x2y,rgb2label,
-                              x_dir,y_dir, dirichlet=False, data_aug=True)
+                              x_dir,y_dir, dirichlet=False, data_aug=True,val_data=True)
     initial_lr = 0.001
     update = 0.995
 
@@ -47,9 +47,9 @@ elif sys.argv[1] == 'finetuning':
     model = mobilenetV2(input_shape=(720, 960, 3), classes=12,
                         alpha=1., reg=float(sys.argv[2]), d=float(sys.argv[3]))
     generator = generate_data(train_files,3,x2y,rgb2label,
-                              x_dir,y_dir, dirichlet=False, data_aug=False)
+                              x_dir,y_dir, dirichlet=False, data_aug=False,val_data=False)
     val_generator = generate_data(train_files,3,x2y,rgb2label,
-                              x_dir,y_dir, dirichlet=False, data_aug=True)
+                              x_dir,y_dir, dirichlet=False, data_aug=True,val_data=True)
     initial_lr = 0.0001
     update = 1
 
