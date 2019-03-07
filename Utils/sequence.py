@@ -128,17 +128,18 @@ class generate_data(keras.utils.Sequence):
 			for row in range(y_rgb.shape[1]):
 				for col in range(y_rgb.shape[2]):
 					y_one_hot[batch][row][col][self.rgb2label[tuple((y_rgb[batch][row][col]*255).reshape(1, -1)[0])]] = 1
-						
+			
+		print(self.dirichlet)			
 		if self.dirichlet == True:
 			# Laplacian Smoothing
 			wished_lapla_p = 0.000001
 			####################### ADDED BY MORITZ ##############################
 			if self.val_data == False:
 				#procent of the epochs after which the parameter no longer changes
-				lapla_conv_p = 0.3
+				lapla_conv_p = 0.5
 				max_epoch = 150
 				#the wished start for the lapla_smo_p
-				wished_lapla_start = 0.1
+				wished_lapla_start = 0.3
 				#linear annealing
 				lap_smo_par = wished_lapla_start - ((self.epoch_count*(wished_lapla_start-wished_lapla_p))/(max_epoch*lapla_conv_p))
 				#quadratic annealing
@@ -154,6 +155,8 @@ class generate_data(keras.utils.Sequence):
 				temp = 1 + lap_smo_par * self.n_classes
 				y_one_hot = (y_one_hot + lap_smo_par)/temp
 			else:
+				print("laplace smoothing without annealing:")
+				print(wished_lapla_p)
 				temp = 1 + wished_lapla_p * self.n_classes
 				y_one_hot = (y_one_hot + wished_lapla_p)/temp
 
