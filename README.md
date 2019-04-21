@@ -1,6 +1,6 @@
 # Deep Learning in Computer Vision Final Project
 
-The objective was to compare the performance of Dirichlet output layers and Temperature Scaling in the calibration of Mobilenet V2 on CamVid dataset.
+The objective was to compare the performance of Dirichlet output layers and Temperature Scaling in the calibration of Deeplab v3+ on CamVid dataset.
 
 ## Training a model:
 - Type in Command Line: python train_model.py [type_of_training] [L2 reg] [dropout rate] [loss] [weights (optional)]
